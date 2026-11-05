@@ -1,33 +1,160 @@
-# Macro calculator
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Macro Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef3f0;--surface:#fff;--ink:#12302f;--mute:#5d7573;--line:#cfdcd7;--accent:#f2b01e;--bar:#1f6f6a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1c1b;--surface:#162826;--ink:#e6f1ee;--mute:#93aca8;--line:#2a403d;--accent:#f2b01e;--bar:#4fb5ac;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1c1b;--surface:#162826;--ink:#e6f1ee;--mute:#93aca8;--line:#2a403d;--accent:#f2b01e;--bar:#4fb5ac;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+main{max-width:640px;margin:0 auto;padding:28px 18px 48px}
+h1{font-size:2rem;font-weight:800;margin:0 0 4px;letter-spacing:-.02em}
+h2{font-size:1.05rem;font-weight:600;margin:0 0 12px}
+p.sub{color:var(--mute);margin:0 0 24px}
+section{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+label{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:var(--mute);flex:1 1 140px}
+input,select,button{font:inherit;color:var(--ink)}
+input,select{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button{background:var(--ink);color:var(--bg);border:0;border-radius:8px;padding:10px 16px;font-weight:600;cursor:pointer;align-self:flex-end}
+button.x{background:none;color:var(--mute);padding:4px 8px;font-size:1.1rem}
+.target{font-size:2.6rem;font-weight:800;line-height:1;margin:14px 0 2px}
+.target small{font-size:1rem;font-weight:400;color:var(--mute)}
+.bar{height:14px;background:var(--bg);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:10px 0 6px}
+.bar i{display:block;height:100%;width:0;background:var(--bar);transition:width .25s}
+.bar i.done{background:var(--accent)}
+ul{list-style:none;margin:12px 0 0;padding:0}
+li{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+li span.g{color:var(--mute);font-size:.85rem}
+.empty{color:var(--mute);margin:12px 0 0}
+.note{font-size:.8rem;color:var(--mute)}
+.stats{display:flex;gap:12px;margin:16px 0 4px}.stats div{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}.stats b{display:block;font-size:2rem;font-weight:800;line-height:1.1}.stats small{color:var(--mute)}.bl{display:flex;justify-content:space-between;margin-top:10px;font-size:.9rem}summary{cursor:pointer;font-weight:600;margin:12px 0 4px}
+</style></head>
+<body><main>
+<h1>Macro calculator</h1>
+<p class="sub">Set your daily targets for protein, carbs and fat, then add foods to see how close you are.</p>
 
-Set your daily targets for protein, carbs and fat, then add foods to see how close you are.
+<section>
+<h2>Your daily targets</h2>
+<div class="row">
+<label>Body weight (kg)<input id="w" type="number" min="20" max="300" value="65" inputmode="decimal"></label>
+<label>Goal<select id="goal">
+<option value="gen">General health</option>
+<option value="old">Older adult (65+)</option>
+<option value="act">Active lifestyle</option>
+<option value="end">Endurance training</option>
+<option value="mus" selected>Build muscle</option>
+<option value="cut">Lose fat, keep muscle</option>
+</select></label>
+</div>
+<div class="row" style="margin-top:12px">
+<label>Where in the range for your goal<input id="rng" type="range" min="0" max="100" value="50"></label>
+<label>Diet<select id="plant"><option value="0">Non plant-based</option><option value="0.05">Mostly plant-based (+5%)</option><option value="0.1">Plant-based (+10%)</option></select></label>
+</div>
+<div class="row" style="margin-top:12px">
+<label>Daily calories (kcal)<input id="kcal" type="number" min="800" max="8000" value="2200" inputmode="numeric"></label>
+<label>Fat share of calories<select id="fatpct"><option value="0.2">20%</option><option value="0.25" selected>25%</option><option value="0.3">30%</option><option value="0.35">35%</option></select></label>
+</div>
+<div class="stats">
+<div><b id="tp">0</b><small>g protein</small></div>
+<div><b id="tc">0</b><small>g carbs</small></div>
+<div><b id="tf">0</b><small>g fat</small></div>
+</div>
+<p class="note" id="mult"></p>
+<p class="note">General estimates, not medical advice. Enter your own calorie target; people with kidney disease or other medical conditions should ask their doctor first.</p>
+</section>
 
-## Your daily targets
-
-Body weight (kg) Goal
-
-Where in the range for your goal Diet
-
-Daily calories (kcal) Fat share of calories
-
-**0**g protein
-
-**0**g carbs
-
-**0**g fat
-
-General estimates, not medical advice. Enter your own calorie target; people with kidney disease or other medical conditions should ask their doctor first.
-
-## Add foods
-
-Show Food Amount (g)
-
-Add your own food
-
-Name Type
-
-Protein per 100 g Carbs per 100 g Fat per 100 g
-
-No foods yet. Pick one above and choose Add food.
-
-Values are approximate grams per 100 g, cooked or ready to eat unless noted. Calories are 4 per g of protein or carbs and 9 per g of fat.
+<section>
+<h2>Add foods</h2>
+<div class="row">
+<label>Show<select id="filter"><option value="all">All foods</option><option value="plant">Plant-based only</option></select></label>
+<label style="flex:2 1 200px">Food<select id="food"></select></label>
+<label>Amount (g)<input id="amt" type="number" min="1" value="100" inputmode="decimal"></label>
+<button id="add" type="button">Add food</button>
+</div>
+<p class="note" id="hint"></p>
+<button id="delc" type="button" class="x" style="display:none">Remove this custom food</button>
+<details><summary>Add your own food</summary>
+<div class="row" style="margin-top:10px">
+<label style="flex:2 1 200px">Name<input id="cn" type="text" maxlength="60" placeholder="e.g. Homemade tofu scramble"></label>
+<label>Type<select id="ct"><option value="p">Plant-based</option><option value="o">Not plant-based</option></select></label>
+</div>
+<div class="row" style="margin-top:10px">
+<label>Protein per 100 g<input id="cp" type="number" min="0" step="0.1" inputmode="decimal"></label>
+<label>Carbs per 100 g<input id="cc" type="number" min="0" step="0.1" inputmode="decimal"></label>
+<label>Fat per 100 g<input id="cf" type="number" min="0" step="0.1" inputmode="decimal"></label>
+<button id="addcustom" type="button">Save food</button>
+</div>
+<p class="note" id="cmsg"></p>
+</details>
+<div id="bars"></div>
+<ul id="list"></ul>
+<p class="empty" id="empty">No foods yet. Pick one above and choose Add food.</p>
+</section>
+<p class="note">Values are approximate grams per 100 g, cooked or ready to eat unless noted. Calories are 4 per g of protein or carbs and 9 per g of fat.</p>
+</main>
+<script>
+const L="Legumes & soy",N="Nuts & seeds",G="Grains",V="Vegetables",O="Plant powders & other",A="Animal",MP="My plant foods",MO="My other foods";
+const FOODS=[
+["Soybeans, cooked",17,9,9,L],["Edamame",11,9,5,L],["Tofu, firm",8,2,5,L],["Tempeh",19,9,11,L],["Natto",17,14,11,L],["Soy milk",3.3,3,2,L],["Lentils, cooked",9,20,0.4,L],["Chickpeas, cooked",9,27,2.6,L],["Black beans, cooked",9,24,0.5,L],["Kidney beans, cooked",8.7,23,0.5,L],["Pinto beans, cooked",9,26,0.7,L],["Mung beans, cooked",7,19,0.4,L],["Fava beans, cooked",7.6,19,0.7,L],["Green peas, cooked",5,14,0.4,L],["Hummus",8,14,10,L],["Falafel",13,32,18,L],["Peanuts",26,16,49,L],
+["Hemp seeds",32,9,49,N],["Pumpkin seeds",30,11,49,N],["Peanut butter",25,20,50,N],["Almonds",21,22,50,N],["Almond butter",21,19,56,N],["Sunflower seeds",21,20,51,N],["Pistachios",20,28,45,N],["Cashews",18,30,44,N],["Sesame seeds",18,23,50,N],["Tahini",17,21,54,N],["Flaxseeds",18,29,42,N],["Chia seeds",17,42,31,N],["Walnuts",15,14,65,N],["Brazil nuts",14,12,66,N],
+["Oats, dry",13,66,7,G],["Bread, wheat",9,49,3,G],["Whole wheat pasta, cooked",5.3,27,1.5,G],["Quinoa, cooked",4.4,21,1.9,G],["Amaranth, cooked",3.8,19,1.6,G],["Millet, cooked",3.5,23,1,G],["Buckwheat, cooked",3.4,20,0.6,G],["Corn, cooked",3.4,21,1.5,G],["Brown rice, cooked",2.6,23,0.9,G],["White rice, cooked",2.7,28,0.3,G],["Barley, cooked",2.3,28,0.4,G],
+["Kale",4.3,9,0.9,V],["Spinach",2.9,3.6,0.4,V],["Broccoli",2.8,7,0.4,V],["Mushrooms",3.1,3.3,0.3,V],["Brussels sprouts",3.4,9,0.3,V],["Asparagus",2.2,3.9,0.1,V],["Potato, baked",2.5,21,0.1,V],["Cauliflower",1.9,5,0.3,V],["Sweet potato",1.6,20,0.1,V],
+["Soy protein isolate powder",85,2,3,O],["Pea protein powder",80,7,6,O],["Spirulina, dried",57,24,8,O],["Seitan",25,14,2,O],["Textured vegetable protein, dry",50,35,1,O],["Nutritional yeast",50,36,5,O],["Mycoprotein (Quorn-style)",14,5,3.5,O],
+["Chicken breast, cooked",31,0,3.6,A],["Beef sirloin, cooked",27,0,10,A],["Pork loin, cooked",27,0,9,A],["Tuna, canned",26,0,1,A],["Tilapia, cooked",26,0,2.7,A],["Shrimp, cooked",24,0,1,A],["Salmon, cooked",22,0,12,A],["Bangus (milkfish), cooked",20,0,6,A],["Egg, whole",13,1.1,11,A],["Greek yogurt",10,4,0.7,A],["Cottage cheese",11,3.4,4.3,A],["Cheddar cheese",25,1.3,33,A],["Milk",3.4,5,3.3,A],["Whey protein powder",80,8,5,A]];
+const RANK=[L,N,G,V,O,A,MP,MO];
+function sortFoods(){FOODS.sort((a,b)=>RANK.indexOf(a[4])-RANK.indexOf(b[4]))}
+function isMine(f){return f[4]===MP||f[4]===MO}
+function saveMine(){try{localStorage.setItem("myfoods",JSON.stringify(FOODS.filter(isMine)))}catch(e){}}
+try{JSON.parse(localStorage.getItem("myfoods")||"[]").forEach(f=>FOODS.push(f))}catch(e){}
+sortFoods();
+const GOALS={gen:[0.8,0.8],old:[1.0,1.2],act:[1.2,1.6],end:[1.2,1.6],mus:[1.6,2.2],cut:[1.8,2.7]};
+const $=id=>document.getElementById(id);
+let items=[];
+const sel=$("food");
+const r1=n=>n.toFixed(1).replace(/\.0$/,"");
+function mult(){const g=GOALS[$("goal").value],t=$("rng").value/100;let m=g[0]+(g[1]-g[0])*t;m*=1+parseFloat($("plant").value);return m}
+function targets(){const w=parseFloat($("w").value)||0,k=parseFloat($("kcal").value)||0;
+ const p=Math.round(w*mult()),f=Math.round(k*parseFloat($("fatpct").value)/9),c=Math.max(0,Math.round((k-4*p-9*f)/4));
+ return {p,c,f,k}}
+function fill(){
+ sel.innerHTML="";const plantOnly=$("filter").value==="plant";let grp=null,og=null;
+ FOODS.forEach((f,i)=>{if(plantOnly&&(f[4]===A||f[4]===MO))return;
+  if(f[4]!==grp){grp=f[4];og=document.createElement("optgroup");og.label=grp;sel.appendChild(og)}
+  const o=document.createElement("option");o.value=i;o.textContent=f[0];og.appendChild(o)});
+}
+fill();
+function hint(){const f=FOODS[sel.value];$("hint").textContent="Per 100 g: "+f[1]+" g protein, "+f[2]+" g carbs, "+f[3]+" g fat";$("delc").style.display=isMine(f)?"inline-block":"none"}
+function render(){
+ const T=targets(),g=GOALS[$("goal").value];
+ const S=items.reduce((a,x)=>({p:a.p+x.p,c:a.c+x.c,f:a.f+x.f}),{p:0,c:0,f:0});S.k=4*S.p+4*S.c+9*S.f;
+ $("tp").textContent=T.p;$("tc").textContent=T.c;$("tf").textContent=T.f;
+ $("rng").disabled=g[0]===g[1];
+ $("mult").textContent="Protein multiplier: "+mult().toFixed(2)+" g/kg (standard range for this goal: "+(g[0]===g[1]?g[0]:g[0]+"\u2013"+g[1])+" g/kg"+(parseFloat($("plant").value)?", plus "+Math.round($("plant").value*100)+"% for plant-based eating":"")+"). Fat is set as a share of your calories, and carbs fill the rest.";
+ const rows=[["Protein",S.p,T.p,"g"],["Carbs",S.c,T.c,"g"],["Fat",S.f,T.f,"g"],["Calories",S.k,T.k,"kcal"]];
+ $("bars").innerHTML=rows.map(r=>{const pct=r[2]?Math.min(100,r[1]/r[2]*100):0;
+  return "<div class='bl'><span>"+r[0]+"</span><span><strong>"+Math.round(r[1]*10)/10+"</strong> / "+r[2]+" "+r[3]+"</span></div><div class='bar'><i class='"+(r[2]&&r[1]>=r[2]?"done":"")+"' style='width:"+pct+"%'></i></div>"}).join("");
+ const ul=$("list");ul.innerHTML="";
+ items.forEach((x,i)=>{const li=document.createElement("li");
+  li.innerHTML="<div>"+x.name+" <span class='g'>"+x.g+" g</span><br><span class='g'>P "+r1(x.p)+" · C "+r1(x.c)+" · F "+r1(x.f)+"</span></div><button class='x' type='button' aria-label='Remove "+x.name+"'>\u00d7</button>";
+  li.querySelector("button").onclick=()=>{items.splice(i,1);render()};ul.appendChild(li)});
+ $("empty").style.display=items.length?"none":"block";
+}
+$("add").onclick=()=>{const g=parseFloat($("amt").value);if(!(g>0))return;const f=FOODS[sel.value],k=g/100;
+ items.push({name:f[0],g:g,p:f[1]*k,c:f[2]*k,f:f[3]*k});render()};
+["w","goal","rng","plant","kcal","fatpct"].forEach(id=>$(id).addEventListener("input",render));
+$("filter").onchange=()=>{fill();hint()};sel.onchange=hint;
+$("addcustom").onclick=()=>{const n=$("cn").value.trim(),v=["cp","cc","cf"].map(id=>parseFloat($(id).value));
+ if(!n||v.some(x=>!(x>=0))){$("cmsg").textContent="Enter a name and protein, carbs and fat values of 0 or more.";return}
+ const plant=$("ct").value==="p";FOODS.push([n,v[0],v[1],v[2],plant?MP:MO]);sortFoods();saveMine();
+ if(!plant)$("filter").value="all";
+ fill();for(const o of sel.options){if(o.textContent===n){sel.value=o.value;break}}
+ hint();$("cmsg").textContent="Saved "+n+" under My foods. It is selected above, ready to add.";
+ ["cn","cp","cc","cf"].forEach(id=>$(id).value="")};
+$("delc").onclick=()=>{const f=FOODS[sel.value];if(!isMine(f))return;FOODS.splice(sel.value,1);saveMine();fill();hint();$("cmsg").textContent="Removed "+f[0]+"."};
+hint();render();
+</script></body></html>
